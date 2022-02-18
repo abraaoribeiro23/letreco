@@ -43,11 +43,26 @@ const updateKeyboardButtonStates = (guesses: GuessLetter[][]): KeyboardButtonSta
 }
 
 function Game() {
-  const [statistics, setStatistics] = useContext(StatisticsContext);
+  
+  const dailyWord = useMemo<DailyWord>(() => getDailyWord(), []);
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
+  const pathWord = useMemo<DailyWord | undefined>(() => getPathWord(code), [code]);
+
+  let selectedWord: DailyWord;
+
+  let gameKey = SAVED_GAME_KEY;
+
+  if(pathWord){
+    gameKey += "_"+code;
+    selectedWord = pathWord;
+  }else{
+    selectedWord = dailyWord;
+  }
 
   const [{
     date: savedDate, guesses, winState, letterStates,
-  }, setSavedGame] = useLocalStorage(SAVED_GAME_KEY, SAVED_GAME_INIT);
+  }, setSavedGame] = useLocalStorage(gameKey, SAVED_GAME_INIT);
 
   const [buttonStates, setButtonStates] = useState<KeyboardButtonStates>(
     updateKeyboardButtonStates(guesses)
@@ -59,21 +74,8 @@ function Game() {
   }
 
   const [isEndGameScreenOpen, setIsEndGameScreenOpen] = useState<boolean>(false);
-
-  const dailyWord = useMemo<DailyWord>(() => getDailyWord(), []);
-
-  const [searchParams] = useSearchParams();
-  const code = searchParams.get("code");
-  const pathWord = useMemo<DailyWord | undefined>(() => getPathWord(code), [code]);
-
-  let selectedWord: DailyWord;
-
-  if(pathWord){
-    selectedWord = pathWord;
-  }else{
-    selectedWord = dailyWord;
-  }
-
+  
+  const [statistics, setStatistics] = useContext(StatisticsContext);
   const updateStatistics = (isGameWon: boolean, guessesAmount: number) => {
     const newStreak = isGameWon ? statistics.currentStreak + 1 : 0;
     console.log(newStreak);
