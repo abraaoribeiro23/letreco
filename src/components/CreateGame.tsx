@@ -11,9 +11,8 @@ import Keyboard from "./Keyboard";
 export const CREATE_WORD_SIZE = 5;
 export const CREATE_GUESS_LIST_SIZE = 1;
 const SAVED_GAME_CREATE_KEY = "savedGameCreate";
-const NODE_ENV = process.env.NODE_ENV;
-const LOCAL_DOMAIN = "http://localhost:3000/";
-const PROD_DOMAIN = "https://www.gabtoschi.com/letreco/";
+//const DOMAIN = "http://localhost:3000/";
+const DOMAIN = "https://letreco-share-demo.herokuapp.com/";
 
 const BUTTON_STATES_INIT: KeyboardButtonStates = {
   letters: true,
@@ -93,9 +92,8 @@ function CreateGame() {
 
       return;
     }
-    
+
     var word = guesses[0].map((x) => x.letter).join("");
-    const DOMAIN = NODE_ENV === "production" ? PROD_DOMAIN : LOCAL_DOMAIN;
     setLink(DOMAIN + "open?code=" + getPathWordEncrypted(word));
   };
   const shareLink = () => {
