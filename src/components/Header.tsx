@@ -1,11 +1,12 @@
 import '../styles/Header.css';
-import { BsFillBarChartLineFill, BsFillGearFill, BsQuestionLg, BsTwitter } from "react-icons/bs"
+import { BsFillBarChartLineFill, BsFillGearFill, BsHouseDoorFill, BsPlus, BsQuestionLg, BsTwitter } from "react-icons/bs"
 import HowToPlayScreen from './HowToPlayScreen';
 import { shuffleArray } from '../utils';
 import { useContext, useState } from 'react';
 import SettingsScreen from './SettingsScreen';
 import { GlobalSettingsContext } from '../hooks/useGlobalSettings';
 import { StatisticsScreen } from './StatisticsScreen';
+import { Link } from 'react-router-dom';
 
 const APP_NAME = 'LETRECO';
 const TWITTER_URL = 'https://twitter.com/meuletreco';
@@ -51,6 +52,20 @@ function Header() {
       }
 
       <div className='d-flex'>
+        <Link to="/">
+            <button
+              className='header-button rounded d-flex align-items-center justify-content-center py-2 me-2'
+              type="button">
+              <BsHouseDoorFill />
+            </button>
+        </Link>
+        <Link to="/create">
+            <button
+              className='header-button rounded d-flex align-items-center justify-content-center py-2 me-2'
+              type="button">
+              <BsPlus />
+            </button>
+        </Link>
         <button
           className='header-button rounded d-flex align-items-center justify-content-center py-2 me-2'
           onClick={() => setIsHowToPlayOpen(true)}
