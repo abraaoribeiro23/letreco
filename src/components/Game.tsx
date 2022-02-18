@@ -1,8 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { GuessDistributionKeys, StatisticsContext } from '../hooks/useStatistics';
 import { DailyWord, GuessLetter, GuessLetterState, GuessValidationResult, KeyboardButtonStates, KeyboardLetterStates, SavedDailyGame } from '../models';
 import { getDailyWord, getLast, getToday, wordList } from '../utils';
+import { getPathWord } from '../utils/pathword.util';
 import EndGameScreen from './EndGameScreen';
 import GuessList from './GuessList';
 import Keyboard from './Keyboard';
@@ -60,6 +62,17 @@ function Game() {
 
   const dailyWord = useMemo<DailyWord>(() => getDailyWord(), []);
 
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get("code");
+  const pathWord = useMemo<DailyWord | undefined>(() => getPathWord(code), [code]);
+
+  let selectedWord: DailyWord;
+
+  if(pathWord){
+    selectedWord = pathWord;
+  }else{
+    selectedWord = dailyWord;
+  }
 
   const updateStatistics = (isGameWon: boolean, guessesAmount: number) => {
     const newStreak = isGameWon ? statistics.currentStreak + 1 : 0;
@@ -100,7 +113,7 @@ function Game() {
 
   const validateLastGuess = (): GuessValidationResult => {
     const lastGuess = getLast(guesses);
-    const dailyWordLetters = dailyWord.word.split('');
+    const dailyWordLetters = selectedWord.word.split('');
 
     const missingLetters = [];
     const validatedGuess: GuessLetter[] = [];
@@ -249,7 +262,7 @@ function Game() {
       style={{ cursor: winState.isGameEnded && !isEndGameScreenOpen ? 'pointer' : 'default' }}
     >
       {isEndGameScreenOpen && <EndGameScreen
-        dailyWord={dailyWord}
+        dailyWord={selectedWord}
         guesses={guesses}
         isGameWon={winState.isGameWon}
         handleCloseScreen={handleEndGameScreenClose}
